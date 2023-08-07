@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.diaas.student.repository.StudentRepository">
+
+	<select id="findCourseById"
+		resultType="com.diaas.student.entities.Courses">
+		select id,dept_id,name,credits
+		from courses
+		where id=#{id}
+	</select>
+	<select id="findSectionByCourseName"
+		resultType="com.diaas.student.entities.Sections">
+		select id,section1,section2,section3
+		from sections
+		where course_name=#{course_name}
+	</select>
+	<select id="findByExamCode"
+		resultType="com.diaas.student.entities.ExamScores">
+		select id,exam_code,user_id
+		from exam_scores
+		where exam_code=#{exam}
+		and
+		status=0
+	</select>
+	<select id="findByExamCodeAndUserId"
+		resultType="com.diaas.student.entities.ExamScores">
+		select id,exam_code,user_id,status
+		from exam_scores
+		where exam_code=#{exam}
+		and
+		user_id=#{user_id}
+	</select>
+	<select id="findByUserId"
+		resultType="com.diaas.student.entities.UserInfo">
+		select id,user_id,first_name,last_name,email,dept_id,year,online,avatar
+		from user_info
+		where
+		user_id=#{user_id}
+	</select>
+	<select id="findUserByUserId" resultType="com.diaas.student.entities.Users">
+		select id,role,password
+		from users
+		where id=#{user_id}
+	</select>
+	<select id="showAllStudentAnswers"
+		resultType="com.diaas.student.entities.AnswerBank">
+		select
+		id,answers,points,exam_code,User_id
+		from answer_bank
+	</select>
+	<select id="showAnswersByUserIdAndExam_code"
+		resultType="com.diaas.student.entities.AnswerBank">
+		select id,answers,points,exam_code,User_id
+		from answer_bank
+		where user_id=#{user_id}
+		and
+		exam_code=#{exam_code}
+	</select>
+	<select id="showIdByUserIdAndExam_code"
+		resultType="java.lang.Integer">
+		select id
+		from answer_bank
+		where user_id=#{user_id}
+		and
+		exam_code=#{exam_code}
+	</select>
+	<select id="findGradesByLastNameAndFirstName" resultType="com.diaas.student.entities.Grades">
+		select id,dept_name,courses,first_name,last_name,year,credits,grade
+		from grades
+		where last_name=#{last_name}
+		and
+		first_name=#{first_name}
+	</select>
+
+	<update id="updateAnswerBankById">
+		update answer_bank
+		<set>
+			<if test="answer.answers!=null">
+				answers=#{answer.answers},
+			</if>
+		</set>
+		where id=#{answer.id}
+	</update>
+	<update id="updateInfoById">
+		update user_info
+		<set>
+			<if test="info.first_name!=null">
+				first_name=#{info.first_name},
+			</if>
+			<if test="info.last_name!=null">
+				last_name=#{info.last_name},
+			</if>
+				<if test="info.email!=null">
+				email=#{info.email},
+			</if>
+			<if test="info.avatar!=null">
+				avatar=#{info.avatar}
+			</if>
+		</set>
+		where id=#{info.id}
+	</update>
+	
+	<insert id="insertIntoAnswerBank">
+		insert into 
+		answer_bank(answers,points,exam_code,user_id)
+		values(#{answer.answers},#{answer.points},#{answer.exam_code},#{answer.user_id})
+	</insert>
+	<update id="insertPointsByid">
+		update answer_bank
+		<set>
+			points=#{points}
+		</set>
+	
+		where id=#{id}
+	</update>
+	<insert id="insertScoreInfo">
+		insert into
+		exam_scores(exam_code,user_id,status)
+		values(#{scores.exam_code},#{scores.user_id},#{scores.status})
+	</insert>
+	<update id="insertTotal">
+		update
+		exam_scores
+		<set>
+			total=#{scores.total},
+			status=#{scores.status}
+		</set>
+		where exam_code=#{scores.exam_code}
+		and
+		user_id=#{scores.user_id}
+	</update>
+</mapper>

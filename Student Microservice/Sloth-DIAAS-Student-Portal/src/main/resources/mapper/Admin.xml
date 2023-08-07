@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.diaas.student.repository.AdminRepository">
+	<insert id="addUser">
+		insert into
+		users(id,role,password)
+		values(#{users.id},#{users.role},#{users.password})
+	</insert>
+	<insert id="addUserInfo">
+		insert into
+		user_info(user_id,first_name,Last_name,dept_id,year)
+		values(#{info.user_id},#{info.first_name},#{info.last_name},#{info.dept_id},#{info.year})
+	</insert>
+	<insert id="addCourse">
+		insert into
+		courses(id,dept_id,name,credits)
+		values(#{course.id}#{course.dept_id},#{course.name},#{course.credits})
+	</insert>
+	<insert id="addDepartment">
+		insert into
+		department(id,dept_name)
+		values(#{dept.id},#{dept.dept_name})
+	</insert>
+	<insert id="addSections">
+		insert into
+		sections(id,section1,section2,section3,course_name,status,dept_id)
+		values(#{section.id},#{section.section1},#{section.section2},#{section.section3},#{section.course_name},#{section.status},#{section.dept_id})
+	</insert>
+	<insert id="addGrade">
+		insert into
+		grades(dept_name,courses,first_name,last_name,year,credits,grade)
+		values(#{grade.dept_name},#{grade.courses},#{grade.first_name},#{grade.last_name},#{grade.year},#{grade.credits},#{grade.grade})
+	</insert>
+	<select id="showAllGrades" resultType="com.diaas.student.entities.Grades">
+		select id,dept_name,courses,first_name,last_name,year,credits,grade
+		from grades
+	</select>
+	<select id="findGradesByDepartmentName" resultType="com.diaas.student.entities.Grades">
+		select id,dept_name,courses,first_name,last_name,year,credits,grade
+		from grades
+		where dept_name=#{dept_name}
+	</select>
+	<select id="findGradesByCourseName" resultType="com.diaas.student.entities.Grades">
+		select id,dept_name,courses,first_name,last_name,year,credits,grade
+		from grades
+		where courses=#{course}
+	</select>
+	<select id="findGradeByGradeObject" resultType="com.diaas.student.entities.Grades">
+		select id,dept_name,courses,first_name,last_name,year,credits,grade
+		from grades
+		where courses=#{grade.courses}
+		and first_name=#{grade.first_name}
+		and last_name=#{grade.last_name}
+	</select>
+	<select id="ShowAllScores" resultType="java.lang.Integer">
+		select distinct user_id
+		from exam_scores
+		where status=1
+	</select>
+	<select id="findScoresByUserId" resultType="com.diaas.student.entities.ExamScores">
+		select id,exam_code,total,user_id
+		from exam_scores
+		where status=1 
+		and user_id=#{userId}
+	</select>
+	<select id="findUserInfoByUserId" resultType="com.diaas.student.entities.UserInfo">
+		select id,user_id,first_name,last_name,dept_id,year
+		from user_info
+		where user_id=#{userId}
+	</select>
+	<select id="ShowAllUsers" resultType="com.diaas.student.entities.UserInfo">
+		select id,user_id,first_name,last_name,dept_id,email,year
+		from user_info
+	</select>
+	<select id="showActiveSections" resultType="com.diaas.student.entities.Sections">
+		select section1,section2,section3,course_name
+		from sections
+		where dept_id=#{dept_id}
+		and
+		status=2
+	</select>
+	<select id="findSectionById" resultType="com.diaas.student.entities.Sections">
+		select section1,section2,section3,course_name
+		from sections
+		where id=#{id}
+	</select>
+	<select id="findTotalByUserIdAndExamCode" resultType="java.lang.Integer">
+		select total
+		from exam_scores
+		where user_id=#{user_id}
+		and exam_code=#{exam_code}
+		and status=1
+	</select>
+	<select id="findCourseByName" resultType="com.diaas.student.entities.Courses">
+		select dept_id,name,credits
+		from courses
+		where name=#{course_name}
+	</select>
+	<select id="findDeptById" resultType="com.diaas.student.entities.Departments">
+		select dept_name
+		from department
+		where id=#{dept_id}
+	</select>
+	<select id="showAllDepartments" resultType="com.diaas.student.entities.Departments">
+		select id,dept_name
+		from department
+	</select>
+	<update id="changeScoreStatus">
+		update exam_scores
+		<set>
+			status=2
+		</set>
+		where user_id=#{user_id}
+		and exam_code=#{exam_code}
+	</update>
+	<update id="updateSectionStatus">
+		update sections
+		<set>		
+			<if test="status!=0">
+				status=#{status},
+			</if>
+			<if test="dept_id!=0">
+				dept_id=#{dept_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<update id="updateGradeById">
+		update grades
+		<set>
+			grade=#{grade}
+		</set>
+		where id=#{id}
+	</update>
+	<update id="resetUserPassword">
+		update users
+		<set>
+			password=#{password}
+		</set>
+		where id=#{id}
+	</update>
+</mapper>
